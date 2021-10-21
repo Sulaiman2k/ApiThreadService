@@ -28,7 +28,7 @@ public class RedisConfig {
     @Bean
     public JedisPool generateJedisPoolFactory() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
-        JedisPool jedisPool = new JedisPool(poolConfig, host, port, Protocol.DEFAULT_TIMEOUT , password , database );
+        JedisPool jedisPool = new JedisPool(poolConfig, host, port, Protocol.DEFAULT_TIMEOUT );
         return jedisPool;
     }
 
