@@ -24,12 +24,10 @@ public class RedisConfig {
     @Value("${spring.redis.password}")
     private String password ;
 
-
     @Bean
     public JedisPool generateJedisPoolFactory() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
-        JedisPool jedisPool = new JedisPool(poolConfig, host, port, Protocol.DEFAULT_TIMEOUT );
-        return jedisPool;
+        return new JedisPool(poolConfig, host, port, Protocol.DEFAULT_TIMEOUT );
     }
 
 }

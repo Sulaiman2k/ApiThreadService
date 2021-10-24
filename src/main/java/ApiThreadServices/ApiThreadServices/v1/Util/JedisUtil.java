@@ -18,6 +18,11 @@ public class JedisUtil {
             return jedis.mget(key);
         }
     }
+    public String get(String key) {
+        try (var jedis = jedisPool.getResource()) {
+            return jedis.get(key);
+        }
+    }
 
     public String setValue(String key, String value) {
         try (var jedis = jedisPool.getResource()) {
