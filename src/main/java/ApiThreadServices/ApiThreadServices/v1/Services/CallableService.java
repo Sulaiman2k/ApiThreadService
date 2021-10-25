@@ -1,45 +1,33 @@
 package ApiThreadServices.ApiThreadServices.v1.Services;
 
-
-import ApiThreadServices.ApiThreadServices.v1.DTO.MockResponse;
 import ApiThreadServices.ApiThreadServices.v1.Util.JedisUtil;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 
 @Component
-public class CallableService implements Callable<Object> {
+public class CallableService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CallableService.class);
 
     @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
-    JedisUtil jedisUtil ;
+    JedisUtil jedisUtil;
 
-//    @Override
-//    public Object call() throws Exception{
-//        var object = new  ArrayList<MockResponse>() ;
-//        var  redisValue = restTemplate.getForObject("https://mocki.io/v1/d4867d8b-b5d5-4a48-a4ab-79131b5809b8" , String.class );
-//        ObjectMapper objectMapper = new ObjectMapper() ;
-//        var type = new TypeReference<ArrayList<MockResponse>>(){
-//        };
-//        objectMapper.readValue(redisValue , type) ;
-//
-//        return redisValue ;
-//    }
-
-        @Override
-    public Object call() throws Exception{
-        var  redisValue = restTemplate.getForObject("https://mocki.io/v1/d4867d8b-b5d5-4a48-a4ab-79131b5809b8" , String.class );
-        jedisUtil.setValue( "check", redisValue ) ;
-        jedisUtil.valueGet("check");
-
-        return redisValue ;
+    @Async("ThreadPoolExecutor")
+    public CompletableFuture<Boolean> makeApiCallAndSaveInRedis(String redisKey, String url){
+        var  redisValue = restTemplate.getForObject(url, String.class);
+        jedisUtil.setValue(redisKey, redisValue) ;
+        var savedValues =  jedisUtil.valueGet(redisKey);
+        LOGGER.info("value saved in redis {}", savedValues);
+        return CompletableFuture.completedFuture(true);
     }
 
 }
