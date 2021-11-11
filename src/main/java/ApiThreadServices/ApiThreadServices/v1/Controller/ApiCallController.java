@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,7 +30,9 @@ public class ApiCallController {
 
   @GetMapping("/job/{id}")
   public Map<String, String> getInfo(@PathVariable("id") String id) {
-    return Map.of("status", apiService.getJobStatus(id));
+    return new HashMap<>(){{
+     put("status", apiService.getJobStatus(id));
+    }};
   }
 
 }
